@@ -4,7 +4,7 @@ from .models import Document, Chunk
 # Register your models here.
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'source_url')
+    list_display = ('id', 'title', 'file_hash', 'source_url')
     search_fields = ('title',)
 
 @admin.register(Chunk)
