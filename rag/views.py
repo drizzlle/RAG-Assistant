@@ -22,12 +22,12 @@ def search_documents(request):
         llm_response = requests.post("http://localhost:11434/api/generate", json={
             "model": "llama3.2",
             "prompt": (
-                "You are a helpful RAG assistant for data center planning. "
-                "Answer using only the context below. If the context is insufficient, say so clearly.\n\n"
+                "You are a helpful assistant. "
+                "Answer the question using only the provided context. If the context is insufficient, say so clearly.\n\n"
                 f"Question:\n{query}\n\n"
                 f"Context:\n{context}\n\n"
                 "Answer:"
-    ),
+            ),
             "stream": False
         })
 

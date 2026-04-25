@@ -1,12 +1,14 @@
 # Data Center RAG Assistant
 
-A Retrieval-Augmented Generation (RAG) assistant that answers questions about data center planning standards by searching through ingested documents. Built to demonstrate how organizations can leverage AI for internal knowledge retrieval **without exposing sensitive operational data to external APIs**.
+A self-hosted Retrieval-Augmented Generation (RAG) assistant built for organizations that cannot afford to send internal documents to cloud AI services. Ingest any PDF, ask questions, get answers grounded in your own data — all running locally on your infrastructure. No API keys, no external calls, no data leaving your network.
 
-## Why This Matters for Data Centers
+## Why Self-Hosted RAG
 
-Data center operators work with highly sensitive information — infrastructure blueprints, redundancy configurations, client SLAs, cooling system specifications, and compliance documentation. Sending this data to cloud-hosted AI services introduces real risks: data sovereignty violations, exposure of physical security details, and potential non-compliance with regulations like GDPR or industry-specific standards.
+Some industries handle documents that should never touch a third-party API. Data center operators work with infrastructure blueprints and client SLAs. Law firms handle privileged case files. Healthcare organizations process patient records under HIPAA. Defense contractors deal with classified specifications. Financial institutions manage audit reports bound by regulatory controls.
 
-This project runs **entirely on local infrastructure**. The embedding model and the LLM both run via Ollama on the same machine that hosts the data. No document content ever leaves the network. For an industry built on trust and uptime, this isn't a nice-to-have — it's a requirement.
+The common thread: these organizations need AI-powered knowledge retrieval, but the documents are too sensitive to upload anywhere.
+
+This project runs **entirely on local infrastructure**. The embedding model and the LLM both run via Ollama on the same machine that hosts the data. No document content ever leaves the network. Whether you're querying data center standards, internal compliance policies, or engineering specifications — the privacy guarantee is the same.
 
 ## How It Works
 
@@ -37,7 +39,7 @@ The key insight: both pipelines use the **same embedding model**, so the questio
 | Embeddings | Ollama + nomic-embed-text (768 dims) | Runs locally, no API keys, no data leaves the machine |
 | LLM | Ollama + llama3.2 | Local inference, suitable for on-prem deployment |
 | PDF Parsing | pdfplumber | Reliable text extraction with table support |
-| Frontend | Vanilla HTML/CSS/JS | Minimal chat interface with AJAX, no framework overhead |
+| Frontend | Bootstrap 5 + vanilla JS | Clean chat interface with AJAX, no framework overhead |
 
 ## Project Structure
 
@@ -106,7 +108,7 @@ Visit `http://localhost:8000/` and ask a question.
 
 **pgvector over a dedicated vector DB** — Postgres is already in the stack. Adding Pinecone or Weaviate means another service to operate, another network hop, and another place data lives. pgvector keeps everything in one database.
 
-**Local models over cloud APIs** — For a company hosting client infrastructure, sending internal documents to OpenAI or Anthropic may be a non-starter. Ollama runs on-prem with zero external calls. Smaller local models also reduce energy consumption compared to repeatedly hitting large cloud models.
+**Local models over cloud APIs** — For organizations handling sensitive documents, sending content to OpenAI or Anthropic may be a non-starter. Ollama runs on-prem with zero external calls. Smaller local models also reduce energy consumption compared to repeatedly hitting large cloud models.
 
 **Simple character-based chunking** — A fixed 1000-character window with 150-character overlap. No semantic chunking, no sentence boundary detection. For a standards document with structured prose, this works well and is trivially explainable.
 
@@ -117,7 +119,7 @@ Visit `http://localhost:8000/` and ask a question.
 ## What I'd Improve in a Production Scenario
 
 - **Incremental ingestion** — watch a folder or integrate with document management systems for automatic ingestion of new documents
-- **Role-based access** — restrict which documents different staff roles can query, critical when SOPs contain sensitive operational details
+- **Role-based access** — restrict which documents different users can query, critical when documents contain sensitive operational details
 - **Feedback loops** — let users flag bad answers to identify weak chunks or prompt issues
 - **Streaming responses** — stream the LLM output token-by-token for better UX on longer answers
 - **Hybrid search** — combine vector similarity with keyword search (BM25) for higher retrieval accuracy
