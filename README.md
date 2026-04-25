@@ -86,14 +86,16 @@ docker run -d --name pgvector \
 ollama pull nomic-embed-text
 ollama pull llama3.2
 ```
+4. Add your own PDF documents to the `files/` folder. The ingest command will process any PDF placed there.
 
-4. Run migrations and ingest:
+5. Run migrations and ingest:
+
 ```bash
 python manage.py migrate
 python manage.py ingest
 ```
 
-5. Start the server:
+6. Start the server:
 ```bash
 python manage.py runserver
 ```

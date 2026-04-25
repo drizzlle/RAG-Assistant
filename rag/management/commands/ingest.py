@@ -1,3 +1,4 @@
+import os
 from django.core.management.base import BaseCommand
 import pdfplumber
 import requests
@@ -6,7 +7,7 @@ import hashlib
     
 
 class Command(BaseCommand):
-    help = "Ingest data from a PDF file and print the first character of the first page."
+    help = "Ingest all PDF files from the files/ folder."
    
     def handle(self, *args, **options):
         with pdfplumber.open("files/EN-50600.pdf") as pdf:
