@@ -8,7 +8,6 @@ import hashlib
 
 class Command(BaseCommand):
     help = "Ingest all PDF files from the files/ folder."
-   
     def handle(self, *args, **options):
             pdf_folder = "files"
 
@@ -22,17 +21,17 @@ class Command(BaseCommand):
                     all_text = ""
                     for page in pdf.pages:
                         all_text += page.extract_text()
-                    chunks = self.chunk_text(all_text)
+                chunks = self.chunk_text(all_text)
 
-                    file_hash = hashlib.sha256(all_text.encode()).hexdigest()
+                file_hash = hashlib.sha256(all_text.encode()).hexdigest()
 
-                    if Document.objects.filter(file_hash=file_hash).exists():
-                        print("Document already ingested, skipping.")
-                        return
+                if Document.objects.filter(file_hash=file_hash).exists():
+                        print(f"'{filename}' already ingested, skipping.")
+                        continue
 
-                    document = Document.objects.create(title="EN-50600", file_hash=file_hash, source_url="https://www.enisa.europa.eu/publications/en-50600")
-
-                    for chunk in chunks:
+                title = os.path.splitext(filename)[0]
+                document = Document.objects.create(title=title, file_hash=file_hash)                
+                for chunk in chunks:
                         embedding = self.embed_text(chunk)
                         Chunk.objects.create(
                             document=document,
@@ -40,7 +39,7 @@ class Command(BaseCommand):
                             embedding_vector=embedding
                         )
 
-                    print(f"Saved {len(chunks)} chunks")
+                print(f"'{filename}' — saved {len(chunks)} chunks")
                     
 
     def chunk_text(self, text, chunk_size=1000, overlap=150):
